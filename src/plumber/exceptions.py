@@ -1,9 +1,9 @@
 class PlumbingCollision(RuntimeError):
-    def __init__(self, left, right):
+    def __init__(self, name, left, right):
         msg = "\n".join([
-            "",
+            "'%s'",
             "    %s",
-            "  with:",
+            "  collides with:",
             "    %s",
-            ]) % (left, right)
+            ]) % (name, left, right)
         super(PlumbingCollision, self).__init__(msg)

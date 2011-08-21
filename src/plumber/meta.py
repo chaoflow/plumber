@@ -1,3 +1,5 @@
+from plumber.exceptions import PlumbingCollision
+
 class PlumberMeta(type):
     """meta class for plumbers
     """
@@ -34,7 +36,7 @@ class PlumberMeta(type):
         for name, instr in instructions:
             # here instructions need to be processed - for now we collide
             if name in dct:
-                raise Exception("Collision: %s" % (k,))
+                raise PlumbingCollision(name, plumber, x)
 
             # in case of instances functions need to be bound
             if not x_is_class and (type(instr) is types.FunctionType):
