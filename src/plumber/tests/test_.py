@@ -12,6 +12,8 @@ TESTFILES = [
 ]
 
 TESTMODULES = [
+    'plumber._instructions',
+    'plumber.meta',
 ]
 
 def test_suite():
