@@ -64,7 +64,7 @@ class PlumberMeta(type):
             dct = x.__dict__.copy()
             fntocurry = "__init__"
         else:
-            raise 
+            raise
             dct = x.__dict__
             fntocurry = "__call__"
 
@@ -73,6 +73,7 @@ class PlumberMeta(type):
             try:
                 instr(dct, bases)
             except PlumbingCollision:
+                # provide more information than instr could
                 raise PlumbingCollision(instr.name, plumber, x)
 
             # in case of instances functions need to be bound
@@ -113,6 +114,7 @@ class PlumberMeta(type):
             if name.startswith('__plumb'): continue
             if name in ['__doc__', '__module__']: continue
 
+            # XXX: rethink this
             # undecorated items are understood as finalize
             if not isinstance(item, Instruction):
                 item = finalize(item)
