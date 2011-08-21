@@ -1,8 +1,5 @@
-OUTDATED
-
-
-Plumber
-=======
+Plumber (OUTDATED DOKU of v1)
+=============================
 
 Plumbing is an alternative to mixin-based extension of classes.  In motivation
 an incomplete list of limitations and/or design choices of python's subclassing
