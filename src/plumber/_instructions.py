@@ -27,7 +27,7 @@ class Instruction(object):
     def payload(self):
         return payload(self)
 
-    def apply(self, dct):
+    def apply(self, dct, base, stack):
         """apply the instruction
 
         May raise exceptions:
@@ -78,11 +78,12 @@ class Instruction(object):
 class EitherOrInstruction(Instruction):
     """Instructions where either an existing value or the provided one is used
     """
-    def apply(self, dct):
+    def apply(self, dct, bases, stack):
         if stack and (stack[-1] == self):
-            return
+            return False
         if self.check(dct, bases, stack):
             dct[self.name] = self.payload
+        return True
 
     def check(self, dct, bases, stack):
         """Check whether to apply an instruction
@@ -135,7 +136,7 @@ class finalize(EitherOrInstruction):
     """
     def check(self, dct, bases, stack):
         if self.name not in dct: return True
-        if not stack or self.__class__ is stack[-1].__class__:
+        if not stack or isinstance(stack[-1], finalize):
             raise PlumbingCollision(self.name)
         return True
 
