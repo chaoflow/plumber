@@ -12,10 +12,6 @@ TESTFILES = [
 ]
 
 TESTMODULES = [
-    'plumber._instructions',
-    'plumber._part',
-    'plumber._plumber',
-    'plumber.tests._globalmetaclasstest',
 ]
 
 def test_suite():
