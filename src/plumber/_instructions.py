@@ -52,9 +52,11 @@ class Instruction(object):
             return True
         if not self.__class__ is right.__class__:
             return False
-        if self.name == right.name and payload == right.payload:
-            return True
-        return False
+        if self.name != right.name:
+            return False
+        if self.payload != right.payload:
+            return False
+        return True
 
     def __init__(self, item, name=None):
         """
