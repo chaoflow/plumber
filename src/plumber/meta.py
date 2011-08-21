@@ -3,7 +3,15 @@ from plumber._instructions import finalize
 from plumber.exceptions import PlumbingCollision
 from plumber.tools import Bases
 
+try:
+    from zope.interface import classImplements
+    from zope.interface import implementedBy
+    ZOPE_INTERFACE_AVAILABLE = True
+except ImportError:                  #pragma NO COVERAGE
+    ZOPE_INTERFACE_AVAILABLE = False #pragma NO COVERAGE
 
+
+# XXX: derive from list/UserList and store self on plumber
 class Instructions(object):
     """Adapter to store instructions on a plumber
 
@@ -87,6 +95,8 @@ class PlumberMeta(type):
         if x_is_class:
             name = "%s_%s" % (plumber.__name__, x.__name__)
             x = type(x)(name, x.__bases__, dct)
+            if ZOPE_INTERFACE_AVAILABLE:
+                classImplements(x, *tuple(implementedBy(plumber)))
         return x
 
     def __init__(plumber, name, bases, dct):
@@ -122,16 +132,9 @@ class PlumberMeta(type):
             item.__parent__ = plumber
             instructions.append(item)
 
-
         # # An existing docstring is an implicit plumb instruction for __doc__
         # if plumber.__doc__ is not None:
         #     instructions.append(plumb(plumber.__doc__, name='__doc__'))
-
-        # # If zope.interface is available treat existence of implemented
-        # # interfaces as an implicit _implements instruction with these
-        # # interfaces.
-        # if ZOPE_INTERFACE_AVAILABLE:
-        #     instructions.append(_implements(plumber))
 
         # # XXX: introduce C3 resolution
         # # check our bases for instructions we don't have already and which

@@ -173,3 +173,53 @@ plumb instruction::
     .. >>> p.func()
     .. 6
 
+
+``zope.interface`` (if available)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Plumbers do not depend on ``zope.interface`` but are aware of it. If
+``zope.interface`` is available, they will declare their interfaces
+on the plumbing::
+
+    >>> from zope.interface import Interface
+    >>> from zope.interface import implements
+
+A plumber with a base class that also implements an interface::
+
+    >>> class IPlbBase(Interface):
+    ...     pass
+
+    >>> class IPlb(Interface):
+    ...     pass
+
+    >>> class PlbBase(Plumber):
+    ...     implements(IPlbBase)
+
+    >>> class Plb(PlbBase):
+    ...     implements(IPlb)
+
+    >>> IPlbBase.implementedBy(Plb)
+    True
+    >>> IPlb.implementedBy(Plb)
+    True
+
+A plumbing using ``Plb``and implementing ``IPlbClass``::
+
+    >>> class IPlumbingClass(Interface):
+    ...     pass
+
+    >>> @Plb
+    ... class PlumbingClass(Base):
+    ...     implements(IPlumbingClass)
+
+The directly declared interface is implemented::
+
+    >>> IPlumbingClass.implementedBy(PlumbingClass)
+    True
+
+The interfaces implemented by the plumber and its base are also implemented::
+
+    >>> IPlb.implementedBy(PlumbingClass)
+    True
+    >>> IPlbBase.implementedBy(PlumbingClass)
+    True
