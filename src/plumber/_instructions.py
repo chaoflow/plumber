@@ -95,8 +95,6 @@ class default(Instruction):
         >>> dct.get('c')
         3
     """
-    priority = 0
-
     def check(self, dct, bases, prev):
         return (self.name not in dct and self.name not in bases)
 
@@ -117,8 +115,6 @@ class finalize(Instruction):
         >>> dct['b']
         3
     """
-    priority = 20
-
     def check(self, dct, bases, stack):
         if self.name not in dct: return True
         if not stack or self.__class__ is stack[-1].__class__:
@@ -127,9 +123,8 @@ class finalize(Instruction):
 
 
 class overwrite(Instruction):
-    priority = 10
-
     def check(self, dct, bases, stack):
         if self.name not in dct: return True
         if not stack: return False
-        return stack[-1].priority <= self.priority
+        if isinstance(stack[-1], finalize): return False
+        return True
