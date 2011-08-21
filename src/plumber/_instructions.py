@@ -27,20 +27,20 @@ class Instruction(object):
     def payload(self):
         return payload(self)
 
-    def check(self, dct, bases, stack):
-        """Check whether to apply an instruction::
+    def apply(self, dct):
+        """apply the instruction
 
-        ``bases`` is a wrapper for all base classes of the plumbing and
-        provides ``__contains__``, instructions may or may not need it.
+        May raise exceptions:
+        - PlumbingCollision
+
+        return True (applied) / False (not applied)
         """
         raise NotImplementedError #pragma NO COVERAGE
 
     def __call__(self, dct, bases):
         stack = dct.setdefault('__plumbing_stacks__', {}).setdefault(self.name, [])
-        if stack and (stack[-1] == self) or not self.check(dct, bases, stack):
-            return
-        dct[self.name] = self.payload
-        stack.append(self)
+        if self.apply(dct, bases, stack):
+            stack.append(self)
 
     def __eq__(self, right):
         """Instructions are equal if ...
@@ -75,7 +75,25 @@ class Instruction(object):
             self.__name__ = name
 
 
-class default(Instruction):
+class EitherOrInstruction(Instruction):
+    """Instructions where either an existing value or the provided one is used
+    """
+    def apply(self, dct):
+        if stack and (stack[-1] == self):
+            return
+        if self.check(dct, bases, stack):
+            dct[self.name] = self.payload
+
+    def check(self, dct, bases, stack):
+        """Check whether to apply an instruction
+
+        ``bases`` is a wrapper for all base classes of the plumbing and
+        provides ``__contains__``, instructions may or may not need it.
+        """
+        raise NotImplementedError #pragma NO COVERAGE
+
+
+class default(EitherOrInstruction):
     """
         >>> dct = dict(a=1)
         >>> bases = dict(b=2)
@@ -99,7 +117,7 @@ class default(Instruction):
         return (self.name not in dct and self.name not in bases)
 
 
-class finalize(Instruction):
+class finalize(EitherOrInstruction):
     """
         >>> dct = dict(a=1)
         >>> bases = dict(b=2)
@@ -122,9 +140,12 @@ class finalize(Instruction):
         return True
 
 
-class overwrite(Instruction):
+class overwrite(EitherOrInstruction):
     def check(self, dct, bases, stack):
-        if self.name not in dct: return True
-        if not stack: return False
-        if isinstance(stack[-1], finalize): return False
+        if self.name not in dct:
+            return True
+        if not stack:
+            return False
+        if isinstance(stack[-1], finalize):
+            return False
         return True
