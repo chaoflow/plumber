@@ -425,7 +425,7 @@ class plumb(Stage2Instruction):
             >>> plb1 + Instruction(1)
             Traceback (most recent call last):
               ...
-            PlumbingCollision: 
+            PlumbingCollision:
                 <plumb 'None' of None payload=1>
               with:
                 <Instruction 'None' of None payload=1>
@@ -433,7 +433,7 @@ class plumb(Stage2Instruction):
             >>> plumb(lambda x: None) + plumb(property(lambda x: None))
             Traceback (most recent call last):
               ...
-            PlumbingCollision: 
+            PlumbingCollision:
                 <plumb 'None' of None payload=<function <lambda> at 0x...>>
               with:
                 <plumb 'None' of None payload=<property object at 0x...>>
@@ -453,7 +453,7 @@ class plumb(Stage2Instruction):
             >>> plumb(1) + plumb(2)
             Traceback (most recent call last):
               ...
-            PlumbingCollision: 
+            PlumbingCollision:
                 <plumb 'None' of None payload=1>
               with:
                 <plumb 'None' of None payload=2>
